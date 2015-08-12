@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>silicon-instructions Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../silicon-instructions.html">
+  </head>
+  <body>
+
+    <p>An example of <code>&lt;silicon-instructions&gt;</code>:</p>
+
+    <silicon-instructions id="instructions"></silicon-instructions>
+
+    <script>
+
+     var instructions = document.getElementById('instructions');
+     instructions.instructions = [
+       {address:0x1000, mnemonic:'push', op_str:'rbp'},
+       {address:0x1001, mnemonic:'mov', op_str:'rax, qword ptr [rip + 0x13b8]'},
+       {address:0x1008, mnemonic:'push', op_str:'rbp'},
+     ];
+    </script>
+
+  </body>
+</html>

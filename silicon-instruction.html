@@ -1,0 +1,77 @@
+<link rel="import" href="../polymer/polymer.html">
+<!--
+A single instruction, consisting of `address`, `mnemonic`, and `operand`.  Works well with [silicon-disassembler](http://github.com/m4b/silicon-disassembler) and `silicon-instructions`.
+
+Example:
+
+          <silicon-instruction address="[[inst.address]]" mnemonic="[[inst.mnemonic]]" operand="[[inst.op_str]]"></silicon-instruction>
+
+@demo
+-->
+<dom-module id="silicon-instruction">
+  <style>
+    :host {
+      display: block;
+      font-family: 'Inconsolata', monospace;
+      --f-size: 16px;
+    }
+    span {
+      margin-right: 4px;
+    }
+   code {
+     font-family: 'Inconsolata', monospace;
+     font-size: var(--f-size);
+   }
+  </style>
+  <link rel="stylesheet" href="styles/tomorrow-night-eighties.css">
+  <script src="highlight.pack.js"></script>
+
+  <template>
+      <code id="inst">[[_combine(address, mnemonic, operand)]]</code>
+  </template>
+  <script>
+  (function() {
+    Polymer({
+      is: 'silicon-instruction',
+      properties: {
+        address: {
+          type: Number
+        },
+        mnemonic: {
+          type: String
+        },
+        operand: {
+          type: String
+        }
+      },
+
+      observers: ['_changed(address, mnemonic, operand)'],
+
+      _changed: function(address, mnemonic, operand){
+        var inst = this.$.inst;
+        hljs.highlightBlock(inst);
+      },
+      
+      /**
+       * Converts an address into a base64 string for display.
+       * TODO: ADD params and return
+       */
+      _addr2string: function(addr) {
+        return addr.toString(16);
+      },
+
+      /**
+       * Combines the mnemonic with the operand
+       * TODO: ADD params and return
+       */
+      _combine: function(address, mnemonic, operand){
+        return address.toString(16) + ' ' + mnemonic + ' ' + operand;
+      },
+
+      ready: function(){
+      }
+      
+    });
+  })();
+  </script>
+</dom-module>
