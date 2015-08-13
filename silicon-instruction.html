@@ -15,63 +15,97 @@ Example:
       font-family: 'Inconsolata', monospace;
       --f-size: 16px;
     }
-    span {
-      margin-right: 4px;
-    }
-   code {
-     font-family: 'Inconsolata', monospace;
-     font-size: var(--f-size);
-   }
-  </style>
-  <link rel="stylesheet" href="styles/tomorrow-night-eighties.css">
-  <script src="highlight.pack.js"></script>
 
+    code {
+      font-family: 'Inconsolata', monospace;
+      font-size: var(--f-size);
+    }
+  </style>
+  <script src="highlight.pack.js"></script>
   <template>
-      <code id="inst">[[_combine(address, mnemonic, operand)]]</code>
+    <link rel="stylesheet" href$="[[_styleHref]]">
+    <code id="inst" class="hljs"></code>
   </template>
   <script>
-  (function() {
-    Polymer({
-      is: 'silicon-instruction',
-      properties: {
-        address: {
-          type: Number
+    (function() {
+      Polymer({
+        is: 'silicon-instruction',
+        properties: {
+          /**
+           * The address of the instruction.
+           */
+          address: {
+            type: Number
+          },
+          /**
+           * The instruction opcode mnemonic.
+           */
+          mnemonic: {
+            type: String
+          },
+          /**
+           * The operand(s) of the instruction.
+           */
+          operand: {
+            type: String
+          },
+          /**
+           * The style to highlight the instruction with.
+           *
+           * Valid styles are in the `.css` files in the `highlight.js` packaged, modulo the suffix.
+           */
+          style: {
+            type: String,
+            value: 'zenburn'
+          },
+          /**
+          * The computed style for the instruction.
+          */
+          _styleHref: {
+            type: String,
+            computed: '_computeStyleHref(style)'
+          },
+
+          /**
+           * The combined instruction string.
+           */
+          string: {
+            type: String,
+            notify: true,
+            computed: '_combine(mnemonic, operand)'
+          }
         },
-        mnemonic: {
-          type: String
+
+        observers: ['_changed(address, string)'],
+
+        _computeStyleHref: function(style){
+          console.log('returning: ', 'styles/' + style + '.css');
+          return this.resolveUrl('styles/' + style + '.css');
         },
-        operand: {
-          type: String
+
+        /**
+         * Updates the code tag with highlighting.
+         *
+         * @param {Number} address The address where the instruction starts
+         * @param {String} code The combined mnemonic + operands
+         */
+        _changed: function(address, code) {
+          var innerHTML = hljs.highlightAuto(code).value;
+          //hacksss
+          innerHTML = '&lt;' + '<span class=\"hljs-number\">' + address + '</span>' + '&gt; ' + innerHTML;
+          Polymer.dom(this.$.inst).innerHTML = innerHTML;
+        },
+
+        /**
+         * Combines the mnemonic with the operand
+         * @param {String} mnemonic The opcode instruction mnemonic
+         * @param {String} operand The instruction's operand(s)
+         * @return {String} The combined mnemonic + operands
+         */
+        _combine: function(mnemonic, operand) {
+          return mnemonic + ' ' + operand;
         }
-      },
-
-      observers: ['_changed(address, mnemonic, operand)'],
-
-      _changed: function(address, mnemonic, operand){
-        var inst = this.$.inst;
-        hljs.highlightBlock(inst);
-      },
-      
-      /**
-       * Converts an address into a base64 string for display.
-       * TODO: ADD params and return
-       */
-      _addr2string: function(addr) {
-        return addr.toString(16);
-      },
-
-      /**
-       * Combines the mnemonic with the operand
-       * TODO: ADD params and return
-       */
-      _combine: function(address, mnemonic, operand){
-        return address.toString(16) + ' ' + mnemonic + ' ' + operand;
-      },
-
-      ready: function(){
-      }
-      
-    });
-  })();
+      });
+    })();
   </script>
 </dom-module>
