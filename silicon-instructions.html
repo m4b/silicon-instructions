@@ -1,52 +1,173 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-list/iron-list.html">
 <link rel="import" href="silicon-instruction.html">
 
 <!--
-Display `<silicon-instruction>`s in a list-like format.  Works well with [silicon-disassembler](http://github.com/m4b/silicon-disassembler).
+Display `<silicon-instruction>`s in a list-like format, with highlighting and semantic data.  Works well with [silicon-disassembler](http://github.com/m4b/silicon-disassembler).
 
 Example:
 
-<silicon-instructions instructions="[[instructions]]"></silicon-instructions>
+        <silicon-instructions instructions="[[instructions]]"></silicon-instructions>
 
 @demo
 -->
 <dom-module id="silicon-instructions">
-
+  <script src="highlight.pack.js"></script>
   <style>
-   :host {
-     display: block;
-     box-sizing: border-box;
-     --font-size: 12px;
-   }
-   /* there's an infinite loop bug for now apparently in chrome if the css custom variable is the same for the host as the child; must report */
-   silicon-instruction {
-     --f-size: var(--font-size);
-   }
+    :host {
+      display: block;
+      box-sizing: border-box;
+      --font-size: 12px;
+      --font-family: 'Inconsolata', monospace;
+      --list-height: 300px;
+      --glow-color: #0ff;
+      --glow-secondary-color: #ff0;
+      --glow-white-color: #fff;
+      font-family: var(--font-family);
+    }
+
+    code {
+      padding: 0px;
+    }
+    /* turtles: https://github.com/Polymer/polymer/issues/2265 */
+
+    silicon-instruction {
+      --f-size: var(--font-size);
+      --f-family: var(--font-family);
+    }
+
+    .selected {
+      z-index: 1;
+      border-radius: 5%;
+      box-shadow: 0px 0px 1px 1px #fff;
+    }
+
+    @keyframes glow {
+      from {
+        /*box-shadow: 0px 0px 10px 3px #0066cc;*/
+        box-shadow: 0px 0px 1px 1px #fff;
+      }
+      to {
+        box-shadow: 0px 0px 12px 4px #0ff;
+        /*box-shadow: 0px 0px 20px 5px #0066cc;*/
+      }
+    }
+
+    .glow {
+      /* make dem glows */
+      animation: glow 3s ease-in infinite alternate;
+    }
+
+    iron-list {
+      padding: 8px;
+      height: var(--list-height);
+    }
   </style>
   <template>
-    <template is="dom-repeat" items="[[instructions]]" as="inst">
-      <silicon-instruction address="[[inst.address]]" mnemonic="[[inst.mnemonic]]" operand="[[inst.op_str]]"></silicon-instruction>
-    </template>
+    <link rel="stylesheet" href$="[[_styleHref]]">
+    <code id="code" class="hljs">
+      <iron-list id="list" items="[[instructions]]" as="inst">
+        <template>
+          <silicon-instruction on-tap="_toggleSelected" class="instruction" id="[[inst.id]]" instruction="[[inst]]"></silicon-instruction>
+        </template>
+      </iron-list>
+    </code>
+    <array-selector id="selector" items="{{instructions}}" selected="{{selected}}" toggle></array-selector>
   </template>
-
 </dom-module>
 
 <script>
+  Polymer({
 
- Polymer({
+    is: 'silicon-instructions',
 
-   is: 'silicon-instructions',
+    properties: {
 
-   properties: {
-     /*
-      * The instructions to display.
-      */
-     instructions: {
-       type: Array,
-       value: []
-     }
-   }
+      /*
+       * Make those instructions glow!  For the CPU conscious, do not enable this.
+       */
+      glow: {
+        type: Boolean,
+        value: false
+      },
+      /*
+       * The instructions to display.
+       */
+      instructions: {
+        type: Array,
+        value: []
+      },
+      /**
+       * The style to use for syntax highlighting.
+       *
+       * Valid styles are the same as the `highlight.js` styles in the styles directory, module the `.css` suffix.
+       */
+      style: {
+        type: String,
+        value: 'zenburn'
+      },
+      /**
+       * The currently selected instruction.
+       */
+      selected: {
+        type: Object,
+        notify: true
+      },
+      /**
+       * The computed style for the instruction.
+       */
+      _styleHref: {
+        type: String,
+        computed: '_computeStyleHref(style)'
+      }
 
- });
+    },
 
+    observers: ['_newInstructions(instructions)'],
+
+    /**
+     * Manually select an instruction in the list, and optionally, scroll to it.  Selection causes highlighting (and glowing if enabled).
+     * The selected instruction object is then available as `selected`.
+     *
+     * @param {Number} i The index of the item to select
+     * @param {Boolean} scroll Whether to scroll to the item or not.
+     */
+    select: function(i, scroll) {
+      this._select(i);
+      if (scroll) this.$.list.scrollToIndex(i);
+    },
+
+    _select: function(i) {
+      var inst = this.$$('#_' + i);
+      var current = this.$$('.selected');
+
+      this.$.selector.select(this.instructions[i]);
+      if (inst === current) {
+        inst = undefined;
+      }
+      // swaps selectedness
+      this.classFollows('selected', inst, current);
+      if (this.glow) this.classFollows('glow', inst, current);
+      console.log('_select: ', i, inst, current);
+    },
+
+    _toggleSelected: function(e) {
+      this._select(e.model.index);
+    },
+
+    _newInstructions: function(instructions) {
+      // add the highlighting into the instructions
+      instructions.forEach(function(instr, index) {
+        var res = hljs.highlightAuto(instr.mnemonic + ' ' + instr.op_str);
+        instr.html = res.value;
+        instr.id = '_' + index; // so we can lookup the `<silicon-instruction>` easily
+        instr.language = res.language;
+      }, this);
+    },
+
+    _computeStyleHref: function(style) {
+      return this.resolveUrl('styles/' + style + '.css');
+    }
+
+  });
 </script>

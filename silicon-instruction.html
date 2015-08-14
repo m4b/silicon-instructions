@@ -1,10 +1,13 @@
 <link rel="import" href="../polymer/polymer.html">
 <!--
-A single instruction, consisting of `address`, `mnemonic`, and `operand`.  Works well with [silicon-disassembler](http://github.com/m4b/silicon-disassembler) and `silicon-instructions`.
+A single instruction.  `inst` should be an object with a `mnemonic`, `operand` and `address`.
+If a `html` is present in the object, that will be used for the innerHTML (a post-processing hack).
+
+Works well with [silicon-disassembler](http://github.com/m4b/silicon-disassembler) and `silicon-instructions`.
 
 Example:
 
-          <silicon-instruction address="[[inst.address]]" mnemonic="[[inst.mnemonic]]" operand="[[inst.op_str]]"></silicon-instruction>
+          <silicon-instruction instruction="[[instr]]"></silicon-instruction>
 
 @demo
 -->
@@ -12,25 +15,32 @@ Example:
   <style>
     :host {
       display: block;
-      font-family: 'Inconsolata', monospace;
+      --f-family: 'Inconsolata', monospace;
       --f-size: 16px;
     }
 
     code {
-      font-family: 'Inconsolata', monospace;
+      font-family: var(--f-family);
       font-size: var(--f-size);
     }
   </style>
-  <script src="highlight.pack.js"></script>
   <template>
-    <link rel="stylesheet" href$="[[_styleHref]]">
-    <code id="inst" class="hljs"></code>
+    <code id="inst" class="">[[string]]</code>
   </template>
   <script>
     (function() {
       Polymer({
         is: 'silicon-instruction',
         properties: {
+
+          /**
+           * The instruction object.
+           */
+          instruction: {
+            type: Object,
+            observer: '_newInstruction'
+          },
+
           /**
            * The address of the instruction.
            */
@@ -50,24 +60,7 @@ Example:
             type: String
           },
           /**
-           * The style to highlight the instruction with.
-           *
-           * Valid styles are in the `.css` files in the `highlight.js` packaged, modulo the suffix.
-           */
-          style: {
-            type: String,
-            value: 'zenburn'
-          },
-          /**
-          * The computed style for the instruction.
-          */
-          _styleHref: {
-            type: String,
-            computed: '_computeStyleHref(style)'
-          },
-
-          /**
-           * The combined instruction string.
+           * The combined/computed instruction string.
            */
           string: {
             type: String,
@@ -76,24 +69,24 @@ Example:
           }
         },
 
-        observers: ['_changed(address, string)'],
-
-        _computeStyleHref: function(style){
-          //console.log('returning: ', 'styles/' + style + '.css');
-          return this.resolveUrl('styles/' + style + '.css');
-        },
-
         /**
-         * Updates the code tag with highlighting.
+         * Observer for `instruction`.
+
+        * Primarily a hack to allow `highlight.js` highlighted html to be
+         * stuffed into the roots innerHTML.
          *
-         * @param {Number} address The address where the instruction starts
-         * @param {String} code The combined mnemonic + operands
+         * @param {Object} instruction The new instruction
          */
-        _changed: function(address, code) {
-          var innerHTML = hljs.highlightAuto(code).value;
-          //hacksss
-          innerHTML = '&lt;' + '<span class=\"hljs-number\">' + address + '</span>' + '&gt; ' + innerHTML;
-          Polymer.dom(this.$.inst).innerHTML = innerHTML;
+
+        _newInstruction: function(instruction) {
+          if (instruction.html){
+            //hacksss
+            var innerHTML = '<code class="hljs">&lt;' + '<span class=\"hljs-number\">' + instruction.address + '</span>' + '&gt; ' + instruction.html + '</code>';
+            Polymer.dom(this.root).innerHTML = innerHTML;
+          }
+          this.operand = instruction.op_str;
+          this.mnemonic = instruction.mnemonic;
+          this.address = instruction.address;
         },
 
         /**
