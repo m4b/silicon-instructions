@@ -14,4 +14,5 @@ See [documentation](http://m4b.github.io/silicon-instructions) for more informat
 
 # TODO
 
+* fix UI `<iron-list>` re-used state bug where multiple elements are highlighted (but not selected)
 * Allow memory on/off option?
