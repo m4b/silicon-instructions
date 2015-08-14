@@ -1,15 +1,16 @@
 <link rel="import" href="../polymer/polymer.html">
 <!--
-A single instruction.  `inst` should be an object with a `mnemonic`, `operand` and `address`.
+A single instruction.  `instruction` should be an object with a `mnemonic`, `operand` and `address`.
 If a `html` is present in the object, that will be used for the innerHTML (a post-processing hack).
 
 Works well with [silicon-disassembler](http://github.com/m4b/silicon-disassembler) and `silicon-instructions`.
 
 Example:
 
-          <silicon-instruction instruction="[[instr]]"></silicon-instruction>
+          <silicon-instruction instruction="[[instruction]]"></silicon-instruction>
 
-@demo
+@group Silicon Elements
+@demo demo/index.html
 -->
 <dom-module id="silicon-instruction">
   <style>
@@ -84,7 +85,7 @@ Example:
             var innerHTML = '<code class="hljs">&lt;' + '<span class=\"hljs-number\">' + instruction.address + '</span>' + '&gt; ' + instruction.html + '</code>';
             Polymer.dom(this.root).innerHTML = innerHTML;
           }
-          this.operand = instruction.op_str;
+          this.operand = instruction.operand ? instruction.operand : instruction.op_str;
           this.mnemonic = instruction.mnemonic;
           this.address = instruction.address;
         },

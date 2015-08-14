@@ -1,46 +1,73 @@
-<!doctype html>
-<html>
+<link rel="import" href="../silicon-instructions.html">
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../paper-item/paper-item.html">
+<link rel="import" href="../../paper-menu/paper-menu.html">
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-  <title>silicon-instructions Demo</title>
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-  <link rel="import" href="../silicon-instructions.html">
-  <link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
-  <link rel="import" href="../../paper-item/paper-item.html">
-  <link rel="import" href="../../paper-menu/paper-menu.html">
-  <link rel="import" href="demo-1.html">
+<dom-module id="demo-1">
+  <style>
 
-</head>
+  </style>
 
-<body>
+  <template>
+    <p>An example of
+      <code>&lt;silicon-instructions&gt;</code>:</p>
 
-  <!-- all sorts of leaky css with paper-dropdown-menu if don't encapsulate -->
-  <demo-1></demo-1>
+    <select id="menu" selected-index="{{selected::change}}">
+      <template id="t2" is="dom-repeat" items="[[items]]">
+        <option value$="[[item]]">[[item]]</option>
+      </template>
+    </select>
+
+    <!-- getting weird click issues for now, will have to postpone -->
+    <!--
+    <paper-dropdown-menu id="menu" label="Choose a Style" selected="[[selected]]">
+      <paper-menu class="dropdown-content">
+        <template id="t2" is="dom-repeat" items="[[items]]">
+          <paper-item>[[item]]</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dropdown-menu>
+    -->
+
+    <silicon-instructions id="instructions" style="zenburn"></silicon-instructions>
+  </template>
+
   <script>
-    // something like this should work
-    /*
-      document.getElementById('t').addEventListener('dom-change', function() {
+    Polymer({
+      is: 'demo-1',
 
-        var menu = document.getElementById('menu');
-        var t2 = document.getElementById('t2');
-        var instructions = document.getElementById('instructions');
+      listeners: {
+        'iron-activate': '_newStyle',
+        'change': '_newStyle'
+      },
 
-        var styles = ['agate', 'androidstudio', 'arta', 'ascetic', 'atelier-cave.dark', 'atelier-cave.light', 'atelier-dune.dark', 'atelier-dune.light', 'atelier-estuary.dark', 'atelier-estuary.light', 'atelier-forest.dark', 'atelier-forest.light',
+      _newStyle: function(e) {
+        // if the paper-dropdown-menu were working...
+        if (this.$.menu.selectedItemLabel){
+          this.$.instructions.style = this.$.menu.selectedItemLabel;
+        }else{
+          this.$.instructions.style = this.items[this.selected];
+        }
+      },
+
+      ready: function() {
+        // generated from:
+        // cd styles; echo -ne "["; for i in *.css; do name=${i%.*}; echo -ne "'$name',"; done; echo -ne "]\n";
+        // and delete the last ,
+        this.items = ['agate', 'androidstudio', 'arta', 'ascetic', 'atelier-cave.dark', 'atelier-cave.light', 'atelier-dune.dark', 'atelier-dune.light', 'atelier-estuary.dark', 'atelier-estuary.light', 'atelier-forest.dark',
+          'atelier-forest.light',
           'atelier-heath.dark', 'atelier-heath.light', 'atelier-lakeside.dark', 'atelier-lakeside.light', 'atelier-plateau.dark', 'atelier-plateau.light', 'atelier-savanna.dark', 'atelier-savanna.light', 'atelier-seaside.dark',
           'atelier-seaside.light', 'atelier-sulphurpool.dark', 'atelier-sulphurpool.light', 'brown_paper', 'codepen-embed', 'color-brewer', 'dark', 'darkula', 'default', 'docco', 'far', 'foundation', 'github-gist', 'github', 'googlecode',
-          'grayscale', 'hopscotch', 'hybrid', 'idea', 'ir_black', 'kimbie.dark', 'kimbie.light', 'magula', 'mono-blue', 'monokai', 'monokai_sublime', 'obsidian', 'paraiso.dark', 'paraiso.light', 'pojoaque', 'railscasts', 'rainbow', 'school_book',
+          'grayscale', 'hopscotch', 'hybrid', 'idea', 'ir_black', 'kimbie.dark', 'kimbie.light', 'magula', 'mono-blue', 'monokai', 'monokai_sublime', 'obsidian', 'paraiso.dark', 'paraiso.light', 'pojoaque', 'railscasts', 'rainbow',
+          'school_book',
           'solarized_dark', 'solarized_light', 'sunburst', 'tomorrow-night-blue', 'tomorrow-night-bright', 'tomorrow-night-eighties', 'tomorrow-night', 'tomorrow', 'vs', 'xcode', 'zenburn'
         ];
 
-        t2.items = styles;
+        this.$.t2.items = this.items;
 
-        menu.addEventListener('iron-activate', function(e){
-          instructions.style = menu.selectedItemLabel;
-        });
-
-        instructions.instructions = [{
+        // whatever, don't judge me
+        this.$.instructions.instructions = [{
           address: 0x1000,
           mnemonic: 'push',
           op_str: 'rbp'
@@ -485,11 +512,9 @@
           mnemonic: 'push',
           op_str: 'rbp'
         }, ];
-      });
-      */
+      }
+    });
+  </script>
   </script>
 
-
-</body>
-
-</html>
+</dom-module>

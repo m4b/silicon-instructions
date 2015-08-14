@@ -24,8 +24,11 @@
     "/demo/"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.0.0",
-    "iron-list":"PolymerElements/iron-list#master"
+    "polymer": "Polymer/polymer#master",
+    "iron-list":"PolymerElements/iron-list#master",
+    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#master",
+    "paper-item": "PolymerElements/paper-item#master",
+    "paper-menu": "PolymerElements/paper-menu#master"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
