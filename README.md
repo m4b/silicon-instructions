@@ -1,6 +1,6 @@
 # Usage
 
-Highlights an array of instructions.
+Highlights an array of instructions.  Glows.  Is somewhat efficient.  Uses [highlight.js](https://highlightjs.org/).
 
 Example:
 
@@ -14,6 +14,4 @@ See [documentation](http://m4b.github.io/silicon-instructions) for more informat
 
 # TODO
 
-* Allow style/*.css changes
-* Allow memory on/off option
-* More theming
+* Allow memory on/off option?
