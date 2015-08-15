@@ -1,0 +1,206 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-list/iron-list.html">
+<link rel="import" href="silicon-instruction.html">
+
+<!--
+Display `<silicon-instruction>`s in a list-like format, with highlighting and semantic data.
+Works well with [silicon-disassembler](http://github.com/m4b/silicon-disassembler).
+
+Example:
+
+        <silicon-instructions instructions="[[instructions]]"></silicon-instructions>
+
+@group Silicon Elements
+@demo
+-->
+<dom-module id="silicon-instructions">
+  <script src="highlight.pack.js"></script>
+  <style>
+    :host {
+      display: block;
+      box-sizing: border-box;
+      --font-size: 12px;
+      --font-family: 'Inconsolata', monospace;
+      --list-height: 300px;
+      --highlight-color: #fff;
+      --glow-color: #0ff;
+      --glow-secondary-color: #ff0;
+      --glow-white-color: #fff;
+      font-family: var(--font-family);
+    }
+
+    code {
+      padding: 0px;
+    }
+    /* turtles: https://github.com/Polymer/polymer/issues/2265 */
+
+    silicon-instruction {
+      --f-size: var(--font-size);
+      --f-family: var(--font-family);
+    }
+
+    .selected {
+      z-index: 1;
+      border-radius: 5%;
+      box-shadow: 0px 0px 1px 1px var(--highlight-color);
+    }
+
+    @keyframes glow {
+      from {
+        /*box-shadow: 0px 0px 10px 3px #0066cc;*/
+        box-shadow: 0px 0px 1px 1px #fff;
+      }
+      to {
+        box-shadow: 0px 0px 12px 4px #0ff;
+        /*box-shadow: 0px 0px 20px 5px #0066cc;*/
+      }
+    }
+
+    .glow {
+      /* make dem glows */
+      animation: glow 3s ease-in infinite alternate;
+    }
+
+    iron-list {
+      padding: 8px;
+      height: var(--list-height);
+    }
+  </style>
+  <template>
+    <link rel="stylesheet" href$="[[_styleHref]]">
+    <code id="code" class="hljs">
+      <iron-list id="list" items="[[instructions]]" as="inst">
+        <template>
+          <silicon-instruction on-tap="_toggleSelected" class$="[[inst.selected]]" id="[[inst.id]]" instruction="[[inst]]"></silicon-instruction>
+        </template>
+      </iron-list>
+    </code>
+    <array-selector id="selector" items="{{instructions}}" selected="{{selected}}" toggle></array-selector>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+
+    is: 'silicon-instructions',
+
+    properties: {
+
+      /*
+       * Make those instructions glow!  For the CPU conscious, do not enable this.
+       */
+      glow: {
+        type: Boolean,
+        value: false
+      },
+      /*
+       * The instructions to display.
+       *
+       * @type {[{operand: String, mnemonic: String, memory: Number}]}
+       */
+      instructions: {
+        type: Array,
+        value: []
+      },
+      /**
+       * The style to use for syntax highlighting.
+       *
+       * Valid styles are the same as the `highlight.js` styles in the styles directory, modulo the `.css` suffix.
+       */
+      style: {
+        type: String,
+        value: 'zenburn'
+      },
+      /**
+       * The currently selected instruction.
+       */
+      selected: {
+        type: Object,
+        notify: true
+      },
+      /**
+       * The computed style for the instruction.
+       */
+      _styleHref: {
+        type: String,
+        computed: '_computeStyleHref(style)'
+      }
+
+    },
+
+    observers: ['_newInstructions(instructions)'],
+
+    /**
+     * Manually select an instruction in the list, and optionally, scroll to it.
+     * Selection causes highlighting (and glowing if enabled).
+     * The selected instruction object is then available as `selected`.
+     *
+     * @param {Number} i The index of the item to select
+     * @param {Boolean} scroll Whether to scroll to the item or not.
+     */
+    select: function(i, scroll) {
+      this._select(i);
+      if (scroll) this.$.list.scrollToIndex(i);
+    },
+
+    _select: function(i) {
+      var siliconInstruction = this.$$('#_' + i);
+      var currentSiliconInstruction = this.$$('.selected');
+      var inst = this.instructions[i];
+      var oldInst = this.selected;
+      this.$.selector.select(inst);
+      if (siliconInstruction === currentSiliconInstruction) {
+        siliconInstruction = undefined;
+      }
+      if (currentSiliconInstruction){
+        this.toggleClass('glow', false, currentSiliconInstruction);
+      }
+      // moar silly hacks
+      inst.selected = this.glow ? 'selected glow' : 'selected';
+      if (oldInst) {
+        oldInst.selected = '';
+      }
+      // swaps selectedness
+      this.classFollows('selected', siliconInstruction, currentSiliconInstruction);
+      // need to remove glow in case we switched from glow/non-glow
+      if (this.glow) this.classFollows('glow', siliconInstruction, currentSiliconInstruction);
+
+    },
+
+    /**
+     * Toggles the selectedness of the instruction.
+     */
+    _toggleSelected: function(e) {
+      this._select(e.model.index);
+    },
+
+    /**
+     * The `instructions` observer; preprocesses the items so it plays nicely with `<iron-list>`.
+     */
+    _newInstructions: function(instructions) {
+      // add the highlighting into the instructions
+      instructions.forEach(function(instr, index) {
+        var res = hljs.highlightAuto(instr.mnemonic + ' ' + instr.op_str);
+        instr.html = res.value;
+        instr.id = '_' + index; // so we can lookup the `<silicon-instruction>` easily
+        instr.language = res.language;
+        instr.selected = ''; // more css hacks
+      }, this);
+    },
+
+    /**
+     * Computed property for the `highlight.js` CSS style href.
+     */
+    _computeStyleHref: function(style) {
+      return this.resolveUrl('styles/' + style + '.css');
+    },
+
+    attached: function(){
+      // hacks because list sometimes doesn't display correctly
+      this.async((function(){
+        this.$.list._render();
+      }).bind(this), 100);
+    }
+
+  });
+</script>

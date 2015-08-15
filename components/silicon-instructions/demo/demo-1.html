@@ -1,0 +1,533 @@
+<link rel="import" href="../silicon-instructions.html">
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../paper-item/paper-item.html">
+<link rel="import" href="../../paper-menu/paper-menu.html">
+<link rel="import" href="../../paper-checkbox/paper-checkbox.html">
+
+
+<dom-module id="demo-1">
+  <style>
+
+  </style>
+
+  <template>
+    <p>An example of
+      <code>&lt;silicon-instructions&gt;</code>:</p>
+    <strong>Note</strong> There is a really annoying bug right now where sometimes iron-list doesn't display its items until it's resized.  If the instructions below are blank, just resize the browser window and it will be fine.  Sorry.
+    
+    <select id="menu" selected-index="{{selected::change}}">
+      <template id="t2" is="dom-repeat" items="[[items]]">
+        <option value$="[[item]]">[[item]]</option>
+      </template>
+    </select>
+
+    <paper-checkbox id="checkbox">Glow</paper-checkbox>
+
+    <!-- https://github.com/PolymerElements/paper-dropdown-menu/issues/20 -->
+    <!--
+    <paper-dropdown-menu id="menu" label="Choose a Style" selected="[[selected]]">
+      <paper-menu class="dropdown-content">
+        <template id="t2" is="dom-repeat" items="[[items]]">
+          <paper-item>[[item]]</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dropdown-menu>
+    -->
+
+    <silicon-instructions id="instructions" style="zenburn"></silicon-instructions>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'demo-1',
+
+      listeners: {
+        'iron-activate': '_newStyle',
+        'change': '_newStyle',
+        'checkbox.iron-change': '_glow'
+      },
+
+      _glow: function(e){
+        this.$.instructions.style = 'zenburn';
+        this.$.instructions.glow = e.target.checked;
+        console.log('this.$.instructions.glow', this.$.instructions.glow);
+      },
+
+      _newStyle: function(e) {
+        // if the paper-dropdown-menu were working...
+        if (this.$.menu.selectedItemLabel){
+          this.$.instructions.style = this.$.menu.selectedItemLabel;
+        }else{
+          this.$.instructions.style = this.items[this.selected];
+        }
+      },
+
+      ready: function() {
+        // generated from:
+        // cd styles; echo -ne "["; for i in *.css; do name=${i%.*}; echo -ne "'$name',"; done; echo -ne "]\n";
+        // and delete the last ,
+        this.items = ['agate', 'androidstudio', 'arta', 'ascetic', 'atelier-cave.dark', 'atelier-cave.light', 'atelier-dune.dark', 'atelier-dune.light', 'atelier-estuary.dark', 'atelier-estuary.light', 'atelier-forest.dark',
+          'atelier-forest.light',
+          'atelier-heath.dark', 'atelier-heath.light', 'atelier-lakeside.dark', 'atelier-lakeside.light', 'atelier-plateau.dark', 'atelier-plateau.light', 'atelier-savanna.dark', 'atelier-savanna.light', 'atelier-seaside.dark',
+          'atelier-seaside.light', 'atelier-sulphurpool.dark', 'atelier-sulphurpool.light', 'brown_paper', 'codepen-embed', 'color-brewer', 'dark', 'darkula', 'default', 'docco', 'far', 'foundation', 'github-gist', 'github', 'googlecode',
+          'grayscale', 'hopscotch', 'hybrid', 'idea', 'ir_black', 'kimbie.dark', 'kimbie.light', 'magula', 'mono-blue', 'monokai', 'monokai_sublime', 'obsidian', 'paraiso.dark', 'paraiso.light', 'pojoaque', 'railscasts', 'rainbow',
+          'school_book',
+          'solarized_dark', 'solarized_light', 'sunburst', 'tomorrow-night-blue', 'tomorrow-night-bright', 'tomorrow-night-eighties', 'tomorrow-night', 'tomorrow', 'vs', 'xcode', 'zenburn'
+        ];
+        this.selected = this.items.indexOf('zenburn');
+
+        this.$.t2.items = this.items;
+
+        // whatever, don't judge me
+        this.$.instructions.instructions = [{
+          address: 0x1000,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1001,
+          mnemonic: 'mov',
+          op_str: 'rax, qword ptr [rip + 0x13b8]'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, {
+          address: 0x1008,
+          mnemonic: 'push',
+          op_str: 'rbp'
+        }, ];
+      }
+    });
+  </script>
+  </script>
+
+</dom-module>

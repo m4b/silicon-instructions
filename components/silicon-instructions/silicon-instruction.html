@@ -1,0 +1,105 @@
+<link rel="import" href="../polymer/polymer.html">
+<!--
+A single instruction.  `instruction` should be an object with a `mnemonic`, `operand` and `address`.
+If a `html` is present in the object, that will be used for the innerHTML (a post-processing hack).
+
+Works well with [silicon-disassembler](http://github.com/m4b/silicon-disassembler) and `silicon-instructions`.
+
+Example:
+
+          <silicon-instruction instruction="[[instruction]]"></silicon-instruction>
+
+@group Silicon Elements
+@demo
+-->
+<dom-module id="silicon-instruction">
+  <style>
+    :host {
+      display: block;
+      --f-family: 'Inconsolata', monospace;
+      --f-size: 16px;
+    }
+
+    code {
+      font-family: var(--f-family);
+      font-size: var(--f-size);
+    }
+  </style>
+  <template>
+    <code id="inst" class="">[[string]]</code>
+  </template>
+  <script>
+    (function() {
+      Polymer({
+        is: 'silicon-instruction',
+        properties: {
+
+          /**
+           * The instruction object.
+           */
+          instruction: {
+            type: Object,
+            observer: '_newInstruction'
+          },
+
+          /**
+           * The address of the instruction.
+           */
+          address: {
+            type: Number
+          },
+          /**
+           * The instruction opcode mnemonic.
+           */
+          mnemonic: {
+            type: String
+          },
+          /**
+           * The operand(s) of the instruction.
+           */
+          operand: {
+            type: String
+          },
+          /**
+           * The combined/computed instruction string.
+           */
+          string: {
+            type: String,
+            notify: true,
+            computed: '_combine(mnemonic, operand)'
+          }
+        },
+
+        /**
+         * Observer for `instruction`.
+         *
+         * Primarily a hack to allow `highlight.js` highlighted html to be
+         * stuffed into the roots' innerHTML.
+         *
+         * @param {Object} instruction The new instruction
+         */
+
+        _newInstruction: function(instruction) {
+          if (instruction.html) {
+            //hacksss
+            var innerHTML = '<code class="hljs">&lt;' + '<span class=\"hljs-number\">' + instruction.address + '</span>' + '&gt; ' + instruction.html + '</code>';
+            Polymer.dom(this.root).innerHTML = innerHTML;
+          }
+          this.operand = instruction.operand ? instruction.operand : instruction.op_str;
+          this.mnemonic = instruction.mnemonic;
+          this.address = instruction.address;
+        },
+
+        /**
+         * Combines the mnemonic with the operand
+         * @param {String} mnemonic The opcode instruction mnemonic
+         * @param {String} operand The instruction's operand(s)
+         * @return {String} The combined mnemonic + operands
+         */
+        _combine: function(mnemonic, operand) {
+          return mnemonic + ' ' + operand;
+        }
+      });
+    })();
+  </script>
+</dom-module>
