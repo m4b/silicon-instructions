@@ -152,6 +152,9 @@ Example:
       if (siliconInstruction === currentSiliconInstruction) {
         siliconInstruction = undefined;
       }
+      if (currentSiliconInstruction){
+        this.toggleClass('glow', false, currentSiliconInstruction);
+      }
       // moar silly hacks
       inst.selected = this.glow ? 'selected glow' : 'selected';
       if (oldInst) {
@@ -159,6 +162,7 @@ Example:
       }
       // swaps selectedness
       this.classFollows('selected', siliconInstruction, currentSiliconInstruction);
+      // need to remove glow in case we switched from glow/non-glow
       if (this.glow) this.classFollows('glow', siliconInstruction, currentSiliconInstruction);
 
     },
@@ -189,6 +193,13 @@ Example:
      */
     _computeStyleHref: function(style) {
       return this.resolveUrl('styles/' + style + '.css');
+    },
+
+    attached: function(){
+      // hacks because list sometimes doesn't display correctly
+      this.async((function(){
+        this.$.list._render();
+      }).bind(this), 100);
     }
 
   });

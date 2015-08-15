@@ -3,6 +3,8 @@
 <link rel="import" href="../../paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../paper-item/paper-item.html">
 <link rel="import" href="../../paper-menu/paper-menu.html">
+<link rel="import" href="../../paper-checkbox/paper-checkbox.html">
+
 
 <dom-module id="demo-1">
   <style>
@@ -19,7 +21,9 @@
       </template>
     </select>
 
-    <!-- getting weird click issues for now, will have to postpone -->
+    <paper-checkbox id="checkbox">Glow</paper-checkbox>
+
+    <!-- https://github.com/PolymerElements/paper-dropdown-menu/issues/20 -->
     <!--
     <paper-dropdown-menu id="menu" label="Choose a Style" selected="[[selected]]">
       <paper-menu class="dropdown-content">
@@ -39,7 +43,14 @@
 
       listeners: {
         'iron-activate': '_newStyle',
-        'change': '_newStyle'
+        'change': '_newStyle',
+        'checkbox.iron-change': '_glow'
+      },
+
+      _glow: function(e){
+        this.$.instructions.style = 'zenburn';
+        this.$.instructions.glow = e.target.checked;
+        console.log('this.$.instructions.glow', this.$.instructions.glow);
       },
 
       _newStyle: function(e) {
@@ -63,6 +74,7 @@
           'school_book',
           'solarized_dark', 'solarized_light', 'sunburst', 'tomorrow-night-blue', 'tomorrow-night-bright', 'tomorrow-night-eighties', 'tomorrow-night', 'tomorrow', 'vs', 'xcode', 'zenburn'
         ];
+        this.selected = this.items.indexOf('zenburn');
 
         this.$.t2.items = this.items;
 
