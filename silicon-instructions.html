@@ -22,6 +22,7 @@ Example:
       --font-size: 12px;
       --font-family: 'Inconsolata', monospace;
       --list-height: 300px;
+      --highlight-color: #fff;
       --glow-color: #0ff;
       --glow-secondary-color: #ff0;
       --glow-white-color: #fff;
@@ -41,7 +42,7 @@ Example:
     .selected {
       z-index: 1;
       border-radius: 5%;
-      box-shadow: 0px 0px 1px 1px #fff;
+      box-shadow: 0px 0px 1px 1px var(--highlight-color);
     }
 
     @keyframes glow {
@@ -144,21 +145,26 @@ Example:
 
     _select: function(i) {
       var siliconInstruction = this.$$('#_' + i);
-      var current = this.$$('.selected');
+      var currentSiliconInstruction = this.$$('.selected');
       var inst = this.instructions[i];
+      var oldInst = this.selected;
       this.$.selector.select(inst);
-      if (siliconInstruction === current) {
+      if (siliconInstruction === currentSiliconInstruction) {
         siliconInstruction = undefined;
       }
       // moar silly hacks
       inst.selected = this.glow ? 'selected glow' : 'selected';
-      if (current) {
-        var id = current.id.split('_')[1];
-        this.instructions[id].selected = '';
+      if (oldInst) {
+        oldInst.selected = '';
       }
+      //this.$.list.fire('resize');
+      //this.$.list.updateViewportBoundaries();
+
       // swaps selectedness
-      this.classFollows('selected', siliconInstruction, current);
-      if (this.glow) this.classFollows('glow', siliconInstruction, current);
+      this.classFollows('selected', siliconInstruction, currentSiliconInstruction);
+      if (this.glow) this.classFollows('glow', siliconInstruction, currentSiliconInstruction);
+      /**/
+
     },
 
     /**
