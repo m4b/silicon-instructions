@@ -10,7 +10,7 @@ Example:
           <silicon-instruction instruction="[[instruction]]"></silicon-instruction>
 
 @group Silicon Elements
-@demo demo/index.html
+@demo
 -->
 <dom-module id="silicon-instruction">
   <style>
@@ -72,15 +72,15 @@ Example:
 
         /**
          * Observer for `instruction`.
-
-        * Primarily a hack to allow `highlight.js` highlighted html to be
-         * stuffed into the roots innerHTML.
+         *
+         * Primarily a hack to allow `highlight.js` highlighted html to be
+         * stuffed into the roots' innerHTML.
          *
          * @param {Object} instruction The new instruction
          */
 
         _newInstruction: function(instruction) {
-          if (instruction.html){
+          if (instruction.html) {
             //hacksss
             var innerHTML = '<code class="hljs">&lt;' + '<span class=\"hljs-number\">' + instruction.address + '</span>' + '&gt; ' + instruction.html + '</code>';
             Polymer.dom(this.root).innerHTML = innerHTML;

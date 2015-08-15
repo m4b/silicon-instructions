@@ -69,7 +69,7 @@ Example:
     <code id="code" class="hljs">
       <iron-list id="list" items="[[instructions]]" as="inst">
         <template>
-          <silicon-instruction on-tap="_toggleSelected" class="instruction" id="[[inst.id]]" instruction="[[inst]]"></silicon-instruction>
+          <silicon-instruction on-tap="_toggleSelected" class$="[[inst.selected]]" id="[[inst.id]]" instruction="[[inst]]"></silicon-instruction>
         </template>
       </iron-list>
     </code>
@@ -129,7 +129,8 @@ Example:
     observers: ['_newInstructions(instructions)'],
 
     /**
-     * Manually select an instruction in the list, and optionally, scroll to it.  Selection causes highlighting (and glowing if enabled).
+     * Manually select an instruction in the list, and optionally, scroll to it.
+     * Selection causes highlighting (and glowing if enabled).
      * The selected instruction object is then available as `selected`.
      *
      * @param {Number} i The index of the item to select
@@ -141,23 +142,34 @@ Example:
     },
 
     _select: function(i) {
-      var inst = this.$$('#_' + i);
+      var siliconInstruction = this.$$('#_' + i);
       var current = this.$$('.selected');
-
-      this.$.selector.select(this.instructions[i]);
-      if (inst === current) {
-        inst = undefined;
+      var inst = this.instructions[i];
+      this.$.selector.select(inst);
+      if (siliconInstruction === current) {
+        siliconInstruction = undefined;
+      }
+      // moar silly hacks
+      inst.selected = this.glow ? 'selected glow' : 'selected';
+      if (current) {
+        var id = current.id.split('_')[1];
+        this.instructions[id].selected = '';
       }
       // swaps selectedness
-      this.classFollows('selected', inst, current);
-      if (this.glow) this.classFollows('glow', inst, current);
-      console.log('_select: ', i, inst, current);
+      this.classFollows('selected', siliconInstruction, current);
+      if (this.glow) this.classFollows('glow', siliconInstruction, current);
     },
 
+    /**
+     * Toggles the selectedness of the instruction.
+     */
     _toggleSelected: function(e) {
       this._select(e.model.index);
     },
 
+    /**
+     * The `instructions` observer; preprocesses the items so it plays nicely with `<iron-list>`.
+     */
     _newInstructions: function(instructions) {
       // add the highlighting into the instructions
       instructions.forEach(function(instr, index) {
@@ -165,9 +177,13 @@ Example:
         instr.html = res.value;
         instr.id = '_' + index; // so we can lookup the `<silicon-instruction>` easily
         instr.language = res.language;
+        instr.selected = ''; // more css hacks
       }, this);
     },
 
+    /**
+    * Computed property for the `highlight.js` CSS style href.
+     */
     _computeStyleHref: function(style) {
       return this.resolveUrl('styles/' + style + '.css');
     }
