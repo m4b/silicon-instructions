@@ -8,16 +8,25 @@
 
 <dom-module id="demo-1">
   <style>
-   silicon-instructions {
-     height: 300px;
-   }
+    :host {
+      height: 100%;
+    }
+
+    div {
+      display: flex;
+      flex-direction: column;
+    }
+
+    silicon-instructions {
+      flex: 1 1 auto;
+    }
   </style>
 
   <template>
     <p>An example of
       <code>&lt;silicon-instructions&gt;</code>:</p>
     <strong>Note</strong> There is a really annoying bug right now where sometimes iron-list doesn't display its items until it's resized.  If the instructions below are blank, just resize the browser window and it will be fine.  Sorry.
-    
+
     <select id="menu" selected-index="{{selected::change}}">
       <template id="t2" is="dom-repeat" items="[[items]]">
         <option value$="[[item]]">[[item]]</option>
@@ -36,8 +45,9 @@
       </paper-menu>
     </paper-dropdown-menu>
     -->
-
-    <silicon-instructions id="instructions" style="zenburn"></silicon-instructions>
+    <div>
+      <silicon-instructions id="instructions" style="zenburn"></silicon-instructions>
+    </div>
   </template>
 
   <script>
