@@ -198,10 +198,8 @@ Example:
     attached: function(){
       // hacks because list sometimes doesn't display correctly
       this.async((function(){
-  //      this.$.list._render();
+        this.$.list._render();
       }).bind(this), 100);
-
-//      this.$.list.style.height = Polymer.dom(this).node.clientHeight + 'px';
 
     }
 
