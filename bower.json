@@ -31,6 +31,7 @@
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
     "web-component-tester": "*",
+    "silicon-disassembler": "SiliconElements/silicon-disassembler#^1.0.0",
     "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#master",
     "paper-item": "PolymerElements/paper-item#master",
     "paper-menu": "PolymerElements/paper-menu#master",
