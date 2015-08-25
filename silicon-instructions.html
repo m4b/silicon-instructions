@@ -18,11 +18,12 @@ Example:
   <template>
     <style>
       :host {
+        background-color: red;
         display: block;
-        /*box-sizing: border-box;*/
+        position: relative;
+        box-sizing: border-box;
         --font-size: 12px;
         --font-family: 'Inconsolata', monospace;
-        --list-height: 300px;
         --highlight-color: #fff;
         --glow-color: #0ff;
         --glow-secondary-color: #ff0;
@@ -30,8 +31,15 @@ Example:
         font-family: var(--font-family);
       }
 
-      code {
+      #code {
         padding: 0px;
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
       }
       /* turtles: https://github.com/Polymer/polymer/issues/2265 */
 
@@ -64,12 +72,11 @@ Example:
 
       iron-list {
         padding: 8px;
-        height: var(--list-height);
       }
     </style>
     <link rel="stylesheet" href$="[[_styleHref]]">
     <code id="code" class="hljs">
-      <iron-list id="list" items="[[instructions]]" selected-items="{{selected}}" as="inst" selection-enabled multi-selection>
+      <iron-list id="list" items="[[instructions]]" selected-items="{{selectedInstructions}}" as="inst" selection-enabled multi-selection>
         <template>
           <silicon-instruction class$="[[_computedClass(selected)]]" id="[[inst.id]]" instruction="[[inst]]"></silicon-instruction>
         </template>
@@ -113,7 +120,7 @@ Example:
       /**
        * The currently selected instruction(s).
        */
-      selected: {
+      selectedInstructions: {
         type: Array,
         notify: true
       },
@@ -132,7 +139,7 @@ Example:
     /**
      * Manually select an instruction in the list, and optionally, scroll to it.
      * Selection causes highlighting (and glowing if enabled).
-     * The selected instruction object is then available as `selected`.
+     * The selected instruction object(s) is then available as `selectedInstructions`.
      *
      * @param {Number} i The index of the item to select
      * @param {Boolean} scroll Whether to scroll to the item or not.
@@ -142,6 +149,29 @@ Example:
       if (scroll) this.$.list.scrollToIndex(i);
     },
 
+    /**
+     * Deselects all of the currently selected instructions.
+     */
+    deselectAll: function() {
+      this.$.list.clearSelection();
+    },
+
+    /**
+     * Select a range of instructions, if any part of any instruction falls _within_ that range, and scrolling to the first.
+     *
+     * @param {{begin: Number, end: Number, count: Number}} range The range of bytes in the hex table to select.
+     */
+    selectRange: function(range) {
+      var shouldScroll = true;
+      for (var i = 0; i < this.instructions.length; i++) {
+        var inst = this.instructions[i];
+        var end = inst.address + inst.size;
+        if (inst.address >= range.begin && end <= range.end){
+          this.select(i, shouldScroll);
+          if (shouldScroll) shouldScroll = false;
+        }
+      }
+    },
 
     _computedClass: function(isSelected) {
       var classes = 'item';
@@ -175,7 +205,7 @@ Example:
     attached: function() {
       // hacks because list sometimes doesn't display correctly
       this.async((function() {
-        this.$.list.fire('resize');
+        //this.$.list.fire('resize');
       }).bind(this), 100);
 
     }

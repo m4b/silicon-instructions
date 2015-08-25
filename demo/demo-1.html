@@ -7,36 +7,43 @@
 
 <link rel="import" href="../../silicon-disassembler/silicon-disassembler.html">
 
-
-
 <dom-module id="demo-1">
   <style>
     :host {
       height: 100%;
-    }
-
-    div {
       display: flex;
       flex-direction: column;
     }
 
-    silicon-instructions {
-      flex: 1 1 auto;
+    div {
+      display: inline-flex;
+      flex-direction: row;
+      padding: 16px;
     }
+
+    silicon-instructions {
+      height: 100%;
+    }
+
   </style>
 
   <template>
+
     <p>An example of
       <code>&lt;silicon-instructions&gt;</code>:</p>
-    <strong>Note</strong> There is a really annoying bug right now where sometimes iron-list doesn't display its items until it's resized. If the instructions below are blank, just resize the browser window and it will be fine. Sorry.
+    <div>
 
-    <select id="menu" selected-index="{{selected::change}}">
-      <template id="t2" is="dom-repeat" items="[[items]]">
-        <option value$="[[item]]">[[item]]</option>
-      </template>
-    </select>
+      <strong>Note: </strong> There is a really annoying bug right now where sometimes iron-list doesn't display its items until it's resized, or scrolled.
+      If the instructions below are blank or partially blank, just resize the browser window and it will be fine.  Sorry.
 
-    <paper-checkbox id="checkbox">Glow</paper-checkbox>
+      <select id="menu" selected-index="{{selected::change}}">
+        <template id="t2" is="dom-repeat" items="[[items]]">
+          <option value$="[[item]]">[[item]]</option>
+        </template>
+      </select>
+
+      <paper-checkbox id="checkbox">Glow</paper-checkbox>
+    </div>
 
     <!-- https://github.com/PolymerElements/paper-dropdown-menu/issues/20 -->
     <!--
@@ -48,11 +55,10 @@
       </paper-menu>
     </paper-dropdown-menu>
     -->
-    <div>
-      <silicon-instructions instructions="[[instructions]]" id="instructions" style="zenburn"></silicon-instructions>
-    </div>
 
-    <silicon-disassembler id="dis" auto instructions="{{instructions}}" bytes="[[bytes]]"></silicon-disassembler>
+    <silicon-instructions instructions="[[instructions]]" id="instructions" style="zenburn"></silicon-instructions>
+
+    <silicon-disassembler id="dis" count="0" auto instructions="{{instructions}}" bytes="[[bytes]]"></silicon-disassembler>
   </template>
 
   <script>
